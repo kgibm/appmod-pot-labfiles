@@ -5,15 +5,32 @@
 ## No input parameters required to run this script. 
 #clenup studentmig bundle if present.
 #unzip completed mig bundle from cloned git repo to student folder
- 
+
+STUDENT_LAB_DIR="/home/techzone/Student/labs/appmod"
 STUDENT_PBW_BUNDLE="/home/techzone/Student/labs/appmod/plantsbywebsphereee6.ear_migrationBundle"
 PWD=pwd
+LOGS=$STUDENT_LAB_DIR/logs
+LOG=$STUDENT_LAB_DIR/logs/build-container.log
+
+#create the LOGS directory if it does not exist
+if [ ! -d "$LOGS" ]; then
+     mkdir $LOGS ;
+     echo "Create Logs Directory: $LOGS"
+fi
+
+#Remove the old log if it exists
+if [  -f "$LOG" ]; then
+    rm $LOG ;
+    echo "removed $LOG"
+fi
+
+
 
 cd $STUDENT_PBW_BUNDLE
 
 echo ""
-echo "-> working directory: $PWD"
-
+echo "-> working directory: $PWD" | tee $LOG
+echo ""
 # Cleanup any existing components
 
 
@@ -25,6 +42,12 @@ echo "----------------------"
 echo "Running cleanup steps" 
 echo "----------------------"
 
+
+sleep 2
+
+#stop the pbw container, if running
+echo "-> Esnure pbw application is stopped"
+docker stop pbw > /dev/null 2>&1
 sleep 2
 
 # Just disconnect db2_demo_data from pbw-network, and ignore errors in case it is not connected. 
@@ -61,10 +84,19 @@ echo "----------------------"
 sleep 2
 
 #build the container
+
+
 echo ""
+echo "=======================================" | tee -a $LOG
+echo "Setup, Build, and Run the PBW container" | tee -a $LOG
+echo "=======================================" | tee -a $LOG
+echo ""
+
 echo "-> start PBW database in container"
 echo "--------------------------"
-echo "docker start db2_demo_data"
+echo " " | tee -a $LOG
+echo "   1. -> docker start db2_demo_data" | tee -a $LOG
+echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
 
@@ -75,7 +107,9 @@ sleep 2
 echo ""
 echo "-> Verify database container is running"
 echo "--------------------------"
-echo "docker ps | grep db2_demo_data"
+echo " " | tee -a $LOG
+echo "   2. -> docker ps | grep db2_demo_data" | tee -a $LOG
+echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
 docker ps | grep db2_demo_data
@@ -84,7 +118,9 @@ sleep 2
 echo ""
 echo "-> Create the docker network, pbw-network"
 echo "---------------------------------"
-echo "docker network create pbw-network"
+echo " " | tee -a $LOG
+echo "   3. -> docker network create pbw-network" | tee -a $LOG
+echo " " | tee -a $LOG
 echo "---------------------------------"
 echo ""
 docker network create pbw-network
@@ -94,7 +130,9 @@ sleep 2
 echo ""
 echo "-> Verify docker network is created"
 echo "---------------------------------"
-echo "docker network list | grep pbw-network"
+echo " " | tee -a $LOG
+echo "   4. -> docker network list | grep pbw-network" | tee -a $LOG
+echo " " | tee -a $LOG
 echo "---------------------------------"
 echo ""
 docker network list | grep pbw-network
@@ -103,7 +141,9 @@ docker network list | grep pbw-network
 echo ""
 echo "-> Connect database container to the Docker network"
 echo "------------------------------------------------"
-echo "docker network connect pbw-network db2_demo_data"
+echo " " | tee -a $LOG
+echo "   5. -> docker network connect pbw-network db2_demo_data" | tee -a $LOG
+echo " " | tee -a $LOG
 echo "------------------------------------------------"
 echo ""
 docker network connect pbw-network db2_demo_data
@@ -114,21 +154,38 @@ sleep 2
 echo ""
 echo "-> Build and tag the 'PlantsByWebSphere' application container image"
 echo "--------------------------------------------------"
-echo "docker build -f /home/techzone/Student/labs/appmod/plantsbywebsphereee6.ear_migrationBundle/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw ."
-echo "--------------------------------------------------"
+echo " " | tee -a $LOG
+echo "   6. -> docker build -f /home/techzone/Student/labs/appmod/plantsbywebsphereee6.ear_migrationBundle/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw ." | tee -a $LOG
+echo " " | tee -a $LOG
+ echo "--------------------------------------------------"
 echo ""
 docker build -f /home/techzone/Student/labs/appmod/plantsbywebsphereee6.ear_migrationBundle/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw .
-sleep 1
+sleep 2 
 
 
-#docker run --rm -p 9080:9080 -p 9443:9443 --network pbw-network  default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw
+echo ""
+echo "-> Run 'PlantsByWebSphere' application in container"
+echo "--------------------------------------------------"
+echo " " | tee -a $LOG
+echo "   7. -> docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-network --name pbw  default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw" | tee -a $LOG
+echo " " | tee -a $LOG
+echo "--------------------------------------------------"
+echo ""
+docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-network --name pbw  default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw
 
+echo ""
+echo "-> pbw app should be running (UP) now!"
+echo "--------------------------------------"
+echo "docker ps | grep pbw" 
+echo "--------------------------------------"
+echo ""
+docker ps | grep pbw
     
-echo ""
-echo "================================"
-echo "build-container script completed"
-echo "================================"
-echo ""
+echo "" | tee -a $LOG
+echo "================================" | tee -a $LOG
+echo "build-container script completed" | tee -a $LOG
+echo "================================" | tee -a $LOG
+echo "" | tee -a $LOG
 
 exit 0
 
