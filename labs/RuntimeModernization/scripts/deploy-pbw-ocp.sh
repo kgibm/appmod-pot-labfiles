@@ -3,6 +3,39 @@
 ######################
 
 ## No input parameters required to run this script. 
+## -i  If you wnt to run the commands in the script by being prompted to continue
+## exmple: deploy-pbw-ocp.sh -i
+
+numParms=$#
+parm1=$1
+
+#echo "numparms: $numParms"
+#echo "parm 1: $1"
+
+if [ $numParms != 0 ]; then
+#  echo "numParms > 0, have parms"
+  if [ $1 == "-i" ]; then
+#    echo "parm1 is '-i"
+    INTERACTIVE_MODE="true"
+    echo ""
+    echo "---------------------------------------------"
+    echo "    Script is running in interactive mode! "
+    echo "---------------------------------------------"
+    echo ""
+    sleep 5
+  fi 
+fi
+
+
+#testing
+#if [[ $INTERACTIVE_MODE == "true" ]]; then
+#  echo "prompt required"
+#  echo ""
+#  read -n 1 -r -s -p $'Press enter to continue...\n'
+#  echo ""
+#  echo "continuing"  
+#fi
+
 
 STUDENT_LAB_DIR="/home/techzone/Student/labs/appmod"
 WORKING_DIR="/home/techzone/Student/labs/appmod/pbw-bundle-complete/deploy/kustomize"
@@ -30,7 +63,6 @@ echo ""
 echo "-> working directory: $PWD" | tee $LOG
 echo ""
 
-
 # Cleanup any existing components
 
 #remove deployment
@@ -40,10 +72,6 @@ echo ""
 #logout of docker
 #logout of ocp
 
-
-# if db2 is running, check if its connected to pbw network
-# if it is, disconnect from the network, then stop the db
-#
 echo ""
 echo "----------------------"
 echo "Running cleanup steps" 
@@ -62,7 +90,7 @@ echo "-> Esnure pbw image stream is removed from project"
 oc delete is pbw > /dev/null 2>&1
 sleep 3
 
-echo "-> switch to the defualt project so that I can delete the apps project"
+echo "-> switch to the default project so the apps project can be removed"
 oc project default > /dev/null 2>&1
 sleep 2
 
@@ -97,75 +125,123 @@ echo "Push pbw image to registry and deploy to OCP" | tee -a $LOG
 echo "============================================" | tee -a $LOG
 echo ""
 
-
-echo "-> login to OCP"
+echo ""
+echo "==========================================="
+echo "1. login to OCP"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   1. -> oc login -u ocadmin -p ibmrhocp" | tee -a $LOG
+echo "   ---> oc login -u ocadmin -p ibmrhocp" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi    
 oc login -u ocadmin -p ibmrhocp
-sleep 3
 
-echo "-> create new project 'apps'"
+sleep 3
+echo ""
+echo ""
+echo "==========================================="
+echo "2. create new project 'apps'"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   2. -> oc new-project apps" | tee -a $LOG
+echo "   ---> oc new-project apps" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 oc new-project apps
 sleep 3
 
-echo "-> switch to 'apps' project"
+echo ""
+echo ""
+echo "==========================================="
+echo "3. switch to 'apps' project"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   3. -> oc project apps" | tee -a $LOG
+echo "   ---> oc project apps" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 oc project apps
 sleep 3
 
-echo "-> login to the OCP internal registry"
+echo ""
+echo ""
+echo "==========================================="
+echo "4. login to the OCP internal registry"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   4. -> docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.ibm.edu" | tee -a $LOG
+echo "   ---> docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.ibm.edu" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.ibm.edu
 sleep 3
 
-echo "-> push the PBW image to OCP internal registry"
+echo ""
+echo ""
+echo "==========================================="
+echo "5. push the PBW image to OCP internal registry"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   5. -> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest" | tee -a $LOG
+echo "   ---> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest
 sleep 3
 
-
-echo "-> list the new pbw image stream"
+echo ""
+echo ""
+echo "==========================================="
+echo "-> 6. list the new pbw image stream"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   6. -> oc get is | grep pbw" | tee -a $LOG
+echo "   ---> oc get is | grep pbw" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 oc get is | grep pbw
 sleep 3
 
-echo "-> deploy pbw app to OCP"
+echo ""
+echo ""
+echo "==========================================="
+echo "7. deploy pbw app to OCP"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   7. -> oc apply -k overlays/dev" | tee -a $LOG
+echo "   ---> oc apply -k overlays/dev" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 oc apply -k overlays/dev
 echo ""
 echo "WAITING 30 seconds for deployment!"
@@ -184,13 +260,19 @@ echo ""
 echo "   > script continuing..."
 sleep 2
 echo ""
-echo "-> list the new deployment"
+echo ""
+echo "==========================================="
+echo "8. list the new deployment"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   8. -> oc get deployment" | tee -a $LOG
+echo "   ---> oc get deployment" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 oc get deployment
 echo ""
 echo "WAITING 15 seconds for pods to finalize!"
@@ -202,28 +284,38 @@ sleep 5
 echo "   > script continuing..."
 sleep 2
 echo "" 
-
-echo "-> get the status of the PBW pod"
+echo ""
+echo "==========================================="
+echo "9. get the status of the PBW pod"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   10. -> oc get pods" | tee -a $LOG
+echo "   ---> oc get pods" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 oc get pods
 sleep 3 
-
-echo "-> get the route to PBW app"
+echo ""
+echo ""
+echo "==========================================="
+echo "10. get the route to PBW app"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   11. -> oc get route | grep plantsbywebsphereee6" | tee -a $LOG
+echo "   ---> oc get route | grep plantsbywebsphereee6" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
 sleep 2
-
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi   
 pbw_route=$(oc get route | grep plantsbywebsphereee6 | awk '{print $2}')
-
+echo ""
 echo "------------------------------------------------" | tee -a $LOG
 echo "PlantsByWebSphere Route: http://$pbw_route/PlantsByWebSphere" | tee -a $LOG
 echo "------------------------------------------------" | tee -a $LOG
