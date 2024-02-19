@@ -130,7 +130,7 @@ echo "==========================================="
 echo "1. login to OCP"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc login -u ocadmin -p ibmrhocp" | tee -a $LOG
+echo "   1. ---> oc login -u ocadmin -p ibmrhocp" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -148,7 +148,7 @@ echo "==========================================="
 echo "2. create new project 'apps'"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc new-project apps" | tee -a $LOG
+echo "   2. ---> oc new-project apps" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -166,7 +166,7 @@ echo "==========================================="
 echo "3. switch to 'apps' project"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc project apps" | tee -a $LOG
+echo "   3. ---> oc project apps" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -183,7 +183,7 @@ echo "==========================================="
 echo "4. login to the OCP internal registry"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.ibm.edu" | tee -a $LOG
+echo "   4. ---> docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.ibm.edu" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -200,7 +200,7 @@ echo "==========================================="
 echo "5. push the PBW image to OCP internal registry"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest" | tee -a $LOG
+echo "   5. ---> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -217,7 +217,7 @@ echo "==========================================="
 echo "-> 6. list the new pbw image stream"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc get is | grep pbw" | tee -a $LOG
+echo "   6. ---> oc get is | grep pbw" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -234,7 +234,7 @@ echo "==========================================="
 echo "7. deploy pbw app to OCP"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc apply -k overlays/dev" | tee -a $LOG
+echo "   7. ---> oc apply -k overlays/dev" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -265,7 +265,7 @@ echo "==========================================="
 echo "8. list the new deployment"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc get deployment" | tee -a $LOG
+echo "   8. ---> oc get deployment" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -289,7 +289,7 @@ echo "==========================================="
 echo "9. get the status of the PBW pod"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc get pods" | tee -a $LOG
+echo "   9. ---> oc get pods" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -305,7 +305,7 @@ echo "==========================================="
 echo "10. get the route to PBW app"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   ---> oc get route | grep plantsbywebsphereee6" | tee -a $LOG
+echo "   10. ---> oc get route | grep plantsbywebsphereee6" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
