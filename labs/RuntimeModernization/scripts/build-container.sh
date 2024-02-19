@@ -140,6 +140,8 @@ echo "   2. ---> docker ps | grep db2_demo_data" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
+sleep 2 
+
 
 if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
@@ -157,6 +159,7 @@ echo "   3. ---> docker network create pbw-network" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "---------------------------------"
 echo ""
+sleep 3
 
 if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
@@ -175,6 +178,7 @@ echo "   4. ---> docker network list | grep pbw-network" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "---------------------------------"
 echo ""
+sleep 3 
 
 if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
@@ -192,6 +196,7 @@ echo "   5. ---> docker network connect pbw-network db2_demo_data" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "------------------------------------------------"
 echo ""
+sleep 3 
 
 if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
@@ -212,13 +217,14 @@ echo " " | tee -a $LOG
  echo "--------------------------------------------------"
 echo ""
 
+sleep 3 
 
 if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi    
 docker build -f $STUDENT_PBW_BUNDLE/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw .
-sleep 2 
+sleep 3 
 
 
 echo ""
@@ -230,12 +236,14 @@ echo "   7. ---> docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-netw
 echo " " | tee -a $LOG
 echo "--------------------------------------------------"
 echo ""
+sleep 3
 
 if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi    
 docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-network --name pbw  default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw
+
 
 echo ""
 echo "---> pbw app should be running (UP) now!"
@@ -244,6 +252,15 @@ echo "docker ps | grep pbw"
 echo "--------------------------------------"
 echo ""
 docker ps | grep pbw
+sleep 3
+
+echo "" | tee -a $LOG
+echo "----------------------------------------------" | tee -a $LOG
+echo "PlantsByWebSphere in 'local container' URL: "
+echo "" | tee -a $LOG
+echo " http://server0.gym.lan:9080/PlantsByWebSphere" | tee -a $LOG
+echo "----------------------------------------------" | tee -a $LOG
+
     
 echo "" | tee -a $LOG
 echo "================================" | tee -a $LOG
