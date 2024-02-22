@@ -86,14 +86,14 @@ sleep 2
 
 
 #remove pbw docker image, if it exits
-cmd1=$(docker images | grep default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw )
+cmd1=$(docker images | grep default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw )
 #echo "cmd1: $cmd1"
 
 
 if [ -n "$cmd1" ]; then
   echo "-> pbw docker image exists, remove it now"
   echo "   -> removing pbw docker image"
-  docker rmi default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw:latest
+  docker rmi default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest
   echo "   ->  pbw docker image removed"
   sleep 2
 fi
@@ -212,7 +212,7 @@ echo "==========================================="
 echo "6. Build and tag the 'PlantsByWebSphere' application container image"
 echo "--------------------------------------------------"
 echo " " | tee -a $LOG
-echo "   6. ---> docker build -f $STUDENT_PBW_BUNDLE/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw ." | tee -a $LOG
+echo "   6. ---> docker build -f $STUDENT_PBW_BUNDLE/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw ." | tee -a $LOG
 echo " " | tee -a $LOG
  echo "--------------------------------------------------"
 echo ""
@@ -223,7 +223,7 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi    
-docker build -f $STUDENT_PBW_BUNDLE/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw .
+docker build -f $STUDENT_PBW_BUNDLE/Containerfile --tag default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw .
 sleep 3 
 
 
@@ -232,7 +232,7 @@ echo "==========================================="
 echo "7. Run 'PlantsByWebSphere' application in container"
 echo "--------------------------------------------------"
 echo " " | tee -a $LOG
-echo "   7. ---> docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-network --name pbw  default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw" | tee -a $LOG
+echo "   7. ---> docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-network --name pbw  default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------------------------------"
 echo ""
@@ -242,7 +242,7 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi    
-docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-network --name pbw  default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw
+docker run -d --rm -p 9080:9080 -p 9443:9443 --network pbw-network --name pbw  default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw
 
 
 echo ""

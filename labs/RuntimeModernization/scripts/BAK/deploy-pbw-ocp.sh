@@ -68,7 +68,7 @@ echo ""
 #remove deployment
 #remove image stream
 #go to default project 
-#delete dev project 
+#delete apps project 
 #logout of docker
 #logout of ocp
 
@@ -90,13 +90,13 @@ echo "-> Esnure pbw image stream is removed from project"
 oc delete is pbw > /dev/null 2>&1
 sleep 3
 
-echo "-> switch to the default project so the dev project can be removed"
+echo "-> switch to the default project so the apps project can be removed"
 oc project default > /dev/null 2>&1
 sleep 2
 
 
-echo "-> remove the dev project"
-oc delete project dev > /dev/null 2>&1
+echo "-> remove the apps project"
+oc delete project apps > /dev/null 2>&1
 sleep 3
 
 
@@ -145,10 +145,10 @@ sleep 3
 echo ""
 echo ""
 echo "==========================================="
-echo "2. create new project 'dev'"
+echo "2. create new project 'apps'"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   2. ---> oc new-project dev" | tee -a $LOG
+echo "   2. ---> oc new-project apps" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -157,16 +157,16 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi   
-oc new-project dev
+oc new-project apps
 sleep 3
 
 echo ""
 echo ""
 echo "==========================================="
-echo "3. switch to 'dev' project"
+echo "3. switch to 'apps' project"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   3. ---> oc project dev" | tee -a $LOG
+echo "   3. ---> oc project apps" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -174,7 +174,7 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi   
-oc project dev
+oc project apps
 sleep 3
 
 echo ""
@@ -200,7 +200,7 @@ echo "==========================================="
 echo "5. push the PBW image to OCP internal registry"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   5. ---> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw:latest" | tee -a $LOG
+echo "   5. ---> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -208,7 +208,7 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi   
-docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/dev/pbw:latest
+docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest
 sleep 3
 
 echo ""
