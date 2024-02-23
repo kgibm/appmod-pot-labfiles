@@ -52,11 +52,11 @@ echo ""
 echo "----------------------------------------------------"
 echo " --> Extracting the pbw bundle from Sudent directory" | tee -a $LOG
 echo ""
-echo "unzip -d $APPMOD_DIR/ $CLONE_REPO_DIR/labs/RuntimeModernization/pbw-bundle-complete.zip" 
+echo "unzip -d $APPMOD_DIR/ $CLONE_REPO_DIR/labs/RuntimeModernization/pbw-bundle-complete-dev.zip" 
 echo "-----------------------------------------------------"
 sleep 4
 
-unzip -d $APPMOD_DIR/ $CLONE_REPO_DIR/labs/RuntimeModernization/pbw-bundle-complete.zip 
+unzip -d $APPMOD_DIR/ $CLONE_REPO_DIR/labs/RuntimeModernization/pbw-bundle-complete-dev.zip 
 
 rc=$?
 echo "rc: $rc"

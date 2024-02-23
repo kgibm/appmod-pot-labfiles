@@ -1,0 +1,6 @@
+kind: WebSphereLibertyApplication
+apiVersion: liberty.websphere.ibm.com/v1
+metadata:
+  name: plantsbywebsphereee6
+spec: 
+  applicationImage: 'default-route-openshift-image-registry.apps.ocp.ibm.edu/staging/pbw'
