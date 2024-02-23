@@ -1,10 +1,10 @@
 ######################
-#  deploy-pbw-ocp.sh 
+#  staging-deploy-pbw-ocp.sh 
 ######################
 
 ## No input parameters required to run this script. 
 ## -i  If you wnt to run the commands in the script by being prompted to continue
-## exmple: deploy-pbw-ocp.sh -i
+## exmple: staging-deploy-pbw-ocp.sh -i
 
 numParms=$#
 parm1=$1
@@ -68,21 +68,43 @@ echo ""
 #remove deployment
 #remove image stream
 #go to default project 
-#delete apps project 
+#delete staging project 
 #logout of docker
 #logout of ocp
+#remove staging tag from docker image
 
 echo ""
 echo "----------------------"
 echo "Running cleanup steps" 
 echo "----------------------"
 
+sleep 2
+
+
+
+echo "---------------------------------------"
+echo "login to OCP"
+echo "   ---> oc login -u ocadmin -p ibmrhocp"
+echo "---------------------------------------"
+echo ""
+oc login -u ocadmin -p ibmrhocp
 
 sleep 2
 
+
+echo "---------------------------------------"
+echo "Switch to the 'staging' project"
+echo "   ---> oc project staging"
+echo "---------------------------------------"
+echo ""
+oc project staging > /dev/null 2>&1
+
+sleep 2
+
+
 #remove the pbw deployment
 echo "-> Esnure pbw deployment is removed"
-oc apply -k overlays/dev > /dev/null 2>&1
+oc delete -k overlays/staging > /dev/null 2>&1
 sleep 5
 
 # remove the pbw image stream 
@@ -90,13 +112,13 @@ echo "-> Esnure pbw image stream is removed from project"
 oc delete is pbw > /dev/null 2>&1
 sleep 3
 
-echo "-> switch to the default project so the apps project can be removed"
+echo "-> switch to the default project so the staging project can be removed"
 oc project default > /dev/null 2>&1
 sleep 2
 
 
-echo "-> remove the apps project"
-oc delete project apps > /dev/null 2>&1
+echo "-> remove the staging project"
+oc delete project staging > /dev/null 2>&1
 sleep 3
 
 
@@ -108,12 +130,16 @@ echo "-> logout of ocp cli"
 oc logout > /dev/null 2>&1
 sleep 2
 
+
+echo "-> remove 'staging' tag from docker image"
+docker rmi default-route-openshift-image-registry.apps.ocp.ibm.edu/staging/pbw > /dev/null 2>&1
+sleep 2
+
 echo "----------------------"
 echo "End of cleanup steps"
 echo "----------------------"
 
 sleep 2
-
 
 
 #Deploy the PBW app to OCP
@@ -125,12 +151,35 @@ echo "Push pbw image to registry and deploy to OCP" | tee -a $LOG
 echo "============================================" | tee -a $LOG
 echo ""
 
+
 echo ""
 echo "==========================================="
-echo "1. login to OCP"
+echo "1. Tag 'PlantsByWebSphere' image for 'staging'"
+echo "--------------------------------------------------"
+echo " " | tee -a $LOG
+echo "   1. ---> docker tag apps/pbw default-route-openshift-image-registry.apps.ocp.ibm.edu/staging/pbw " | tee -a $LOG
+echo " " | tee -a $LOG
+ echo "--------------------------------------------------"
+echo ""
+
+sleep 2 
+
+if [[ $INTERACTIVE_MODE == "true" ]]; then
+  read -n 1 -r -s -p $'Press enter to continue...\n'
+  echo ""
+fi    
+docker tag apps/pbw default-route-openshift-image-registry.apps.ocp.ibm.edu/staging/pbw
+sleep 3 
+
+
+
+
+echo ""
+echo "==========================================="
+echo "2. login to OCP"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   1. ---> oc login -u ocadmin -p ibmrhocp" | tee -a $LOG
+echo "   2. ---> oc login -u ocadmin -p ibmrhocp" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -140,15 +189,16 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   echo ""
 fi    
 oc login -u ocadmin -p ibmrhocp
+oc project default
 
 sleep 3
 echo ""
 echo ""
 echo "==========================================="
-echo "2. create new project 'apps'"
+echo "3. create new project 'staging'"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   2. ---> oc new-project apps" | tee -a $LOG
+echo "   3. ---> oc new-project staging" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -157,16 +207,16 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi   
-oc new-project apps
+oc new-project staging
 sleep 3
 
 echo ""
 echo ""
 echo "==========================================="
-echo "3. switch to 'apps' project"
+echo "4. switch to 'staging' project"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   3. ---> oc project apps" | tee -a $LOG
+echo "   4. ---> oc project staging" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -174,16 +224,16 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi   
-oc project apps
+oc project staging
 sleep 3
 
 echo ""
 echo ""
 echo "==========================================="
-echo "4. login to the OCP internal registry"
+echo "5. login to the OCP internal registry"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   4. ---> docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.ibm.edu" | tee -a $LOG
+echo "   5. ---> docker login -u $(oc whoami) -p $(oc whoami -t) default-route-openshift-image-registry.apps.ocp.ibm.edu" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -197,10 +247,10 @@ sleep 3
 echo ""
 echo ""
 echo "==========================================="
-echo "5. push the PBW image to OCP internal registry"
+echo "6. push the PBW image to OCP internal registry"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   5. ---> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest" | tee -a $LOG
+echo "   6. ---> docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/staging/pbw:latest" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -208,16 +258,16 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi   
-docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/apps/pbw:latest
+docker push default-route-openshift-image-registry.apps.ocp.ibm.edu/staging/pbw:latest
 sleep 3
 
 echo ""
 echo ""
 echo "==========================================="
-echo "-> 6. list the new pbw image stream"
+echo "-> 7. list the new pbw image stream"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   6. ---> oc get is | grep pbw" | tee -a $LOG
+echo "   7. ---> oc get is | grep pbw" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -231,10 +281,10 @@ sleep 3
 echo ""
 echo ""
 echo "==========================================="
-echo "7. deploy pbw app to OCP"
+echo "8. deploy pbw app to OCP"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   7. ---> oc apply -k overlays/dev" | tee -a $LOG
+echo "   8. ---> oc apply -k overlays/staging" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -242,7 +292,7 @@ if [[ $INTERACTIVE_MODE == "true" ]]; then
   read -n 1 -r -s -p $'Press enter to continue...\n'
   echo ""
 fi   
-oc apply -k overlays/dev
+oc apply -k overlays/staging
 echo ""
 echo "WAITING 30 seconds for deployment!"
 sleep 5
@@ -262,10 +312,10 @@ sleep 2
 echo ""
 echo ""
 echo "==========================================="
-echo "8. list the new deployment"
+echo "9. list the new deployment"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   8. ---> oc get deployment" | tee -a $LOG
+echo "   9. ---> oc get deployment" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -286,10 +336,10 @@ sleep 2
 echo "" 
 echo ""
 echo "==========================================="
-echo "9. get the status of the PBW pod"
+echo "10. get the status of the PBW pod"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   9. ---> oc get pods" | tee -a $LOG
+echo "   10. ---> oc get pods" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -302,10 +352,10 @@ sleep 3
 echo ""
 echo ""
 echo "==========================================="
-echo "10. get the route to PBW app"
+echo "11. get the route to PBW app"
 echo "--------------------------"
 echo " " | tee -a $LOG
-echo "   10. ---> oc get route | grep plantsbywebsphereee6" | tee -a $LOG
+echo "   11. ---> oc get route | grep plantsbywebsphereee6" | tee -a $LOG
 echo " " | tee -a $LOG
 echo "--------------------------"
 echo ""
@@ -328,4 +378,3 @@ echo "" | tee -a $LOG
 
 
 exit 0
-
