@@ -230,13 +230,37 @@ echo "End of cleanup steps for builds"
 echo "-------------------------------"
 
 sleep 2
+
+
+echo ""
+echo "------------------------------------------"
+echo "Running cleanup steps for migration bundle" 
+echo "------------------------------------------"
+echo ""
+
+sleep 2
+
+LABS_DIR=/home/techzone/Student/labs
+APPMOD_DIR=$LABS_DIR/appmod 
+STUDENT_PBW_BUNDLE="$APPMOD_DIR/pbw-bundle-complete"
+
+echo "-> pbw bundle path: $STUDENT_PBW_BUNDLE"
+
+if [ -d "$STUDENT_PBW_BUNDLE" ]; then
+     echo " -> Cleaning up old pbw bundle from student directory" 
+     rm -rf $STUDENT_PBW_BUNDLE ;
+     sleep 2
+fi
+echo "-----------------------------------------"
+echo "End of cleanup steps for migration bundle"
+echo "-----------------------------------------"
+
     
 echo "" 
 echo "================================" 
 echo "lab-reset.sh script completed" 
 echo "================================" 
 echo "" 
-
 
 
 
