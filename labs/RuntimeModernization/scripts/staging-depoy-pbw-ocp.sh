@@ -41,7 +41,7 @@ STUDENT_LAB_DIR="/home/techzone/Student/labs/appmod"
 WORKING_DIR="/home/techzone/Student/labs/appmod/pbw-bundle-complete/deploy/kustomize"
 #PWD=pwd
 LOGS=$STUDENT_LAB_DIR/logs
-LOG=$STUDENT_LAB_DIR/logs/deploy-pbw-ocp.log
+LOG=$STUDENT_LAB_DIR/logs/staging-deploy-pbw-ocp.log
 
 #create the LOGS directory if it does not exist
 if [ ! -d "$LOGS" ]; then
