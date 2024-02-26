@@ -94,7 +94,7 @@ sleep 2
 echo "---------------------------------------"
 echo "Switch to the 'default' project"
 echo "   ---> oc project default"
-echo " Remove resources from 'staging' project"
+echo " Remove resources from 'dev' project"
 echo "---------------------------------------"
 echo ""
 oc project default > /dev/null 2>&1
