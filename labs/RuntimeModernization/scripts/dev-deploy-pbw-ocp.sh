@@ -92,22 +92,23 @@ sleep 2
 
 
 echo "---------------------------------------"
-echo "Switch to the 'dev' project"
-echo "   ---> oc project dev"
+echo "Switch to the 'default' project"
+echo "   ---> oc project default"
+echo " Remove resources from 'staging' project"
 echo "---------------------------------------"
 echo ""
-oc project dev > /dev/null 2>&1
+oc project default > /dev/null 2>&1
 
 sleep 2
 
 #remove the pbw deployment
 echo "-> Esnure pbw deployment is removed"
-oc delete -k overlays/dev > /dev/null 2>&1
+oc delete -n dev -k overlays/dev > /dev/null 2>&1
 sleep 5
 
 # remove the pbw image stream 
 echo "-> Esnure pbw image stream is removed from project"
-oc delete is pbw > /dev/null 2>&1
+oc delete -n dev is pbw > /dev/null 2>&1
 sleep 3
 
 echo "-> switch to the default project so the dev project can be removed"
